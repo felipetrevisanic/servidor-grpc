@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package moeda;
+
+service ConversorDeMoedas {
+  rpc Converter (RequisicaoConversao) returns (RespostaConversao);
+}
+
+message RequisicaoConversao {
+  double valor = 1;
+  string moeda_origem = 2;
+  string moeda_destino = 3;
+}
+
+message RespostaConversao {
+  double valor_convertido = 1;
+  string moeda_origem = 2;
+  string moeda_destino = 3;
+  double taxa_cambio = 4;
+}
