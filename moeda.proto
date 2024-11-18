@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package moeda;
+
+service ConversorDeMoedas {
+  rpc Converter (RequisicaoConversao) returns (RespostaConversao);
+  rpc ListarMoedas (RequisicaoListarMoedas) returns (RespostaListarMoedas);
+}
+
+message RequisicaoConversao {
+  double valor = 1;
+  string moeda_origem = 2;
+  string moeda_destino = 3;
+}
+
+message RespostaConversao {
+  double valor_convertido = 1;
+  string moeda_origem = 2;
+  string moeda_destino = 3;
+  double taxa_cambio = 4;
+}
+
+message RequisicaoListarMoedas {}
+
+message RespostaListarMoedas {
+  repeated Moeda moedas = 1;
+}
+
+message Moeda {
+  string code = 1;
+  string name = 2;
+}
