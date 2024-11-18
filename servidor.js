@@ -71,9 +71,35 @@ async function converter(chamada, callback) {
     }
   } 
 // Iniciar o servidor gRPC
+async function listarMoedas(call, callback) {
+  try {
+    const resposta = await axios.get('https://open.er-api.com/v6/latest');
+    const currencies = resposta.data.rates;
+
+    const moedasArray = Object.keys(currencies).map((code) => ({
+      code,
+      name: code, // Usando o código como nome por falta de dados completos
+    }));
+
+    console.log('Moedas processadas:', moedasArray);
+
+    callback(null, { moedas: moedasArray });
+  } catch (erro) {
+    console.error('Erro ao obter a lista de moedas:', erro.message);
+    callback({
+      code: grpc.status.INTERNAL,
+      message: 'Erro ao obter a lista de moedas',
+    });
+  }
+}
+
+// Adicione o novo método ao servidor gRPC
 function main() {
   const servidor = new grpc.Server();
-  servidor.addService(moedaProto.ConversorDeMoedas.service, { Converter: converter });
+  servidor.addService(moedaProto.ConversorDeMoedas.service, {
+    Converter: converter,
+    ListarMoedas: listarMoedas,
+  });
   servidor.bindAsync('0.0.0.0:50051', grpc.ServerCredentials.createInsecure(), () => {
     console.log('Servidor gRPC rodando na porta 50051');
     servidor.start();
